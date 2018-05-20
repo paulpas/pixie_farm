@@ -1,0 +1,16 @@
+[Unit]
+Description=Claymore Etherenet Miner
+After=syslog.target
+
+[Service]
+Type=simple
+User=nobody
+PIDFile=/var/pid/claymore.pid
+PermissionsStartOnly=true
+ExecStartPre=/bin/chown nobody:nobody /var/run/claymore.pid
+ExecStartPre=/bin/rm -f /var/run/claymore.pid
+ExecStart=/opt/Claymore/start.bash
+Restart=on-abort
+
+[Install]
+WantedBy=multi-user.target

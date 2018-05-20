@@ -1,0 +1,12 @@
+[Unit]
+Description=xmr
+Type=simple
+After=network.target
+[Service]
+TimeoutSec=600
+ExecStart=/usr/local/src/xmr-stak/build/bin/xmr-stak-cpu-configurator.sh
+Restart=always
+User=root
+[Install]
+WantedBy=multi-user.target
+
