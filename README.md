@@ -10,5 +10,5 @@ Monero PXE farm using DRBL and a lot of custom scripts
 * install_DRBL_xmr
   * The script that will take a fresh system and install EvErYtHiNg and make it run.
 
-* profil.d
+* profile.d
   * The functions for managing the farm exist here and are deployed in /etc/profile.d
