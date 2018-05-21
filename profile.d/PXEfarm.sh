@@ -24,3 +24,10 @@ function updatekernel
 	mknic-nbi -k $kernel -i $arch
 }
 
+function rebootnodes
+{
+	for i in `arp -n | grep -v incomplete | grep enp2 | awk '{print $1}'`
+	do
+		nc -w 1 $i 22 </dev/null &>/dev/null  && echo "Rebooting $i "; ssh -o ConnectTimeout=1 $i "reboot" 2>/dev/null
+	done | sort -rn -k 5 
+}
