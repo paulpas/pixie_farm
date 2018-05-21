@@ -27,6 +27,11 @@ gpgkey=http://developer.download.nvidia.com/compute/cuda/repos/rhel7/x86_64/7fa2
 EOF
 fi
 
+if [[ -f /etc/redhat-release ]]; then
+    yum install centos-release-scl epel-release
+    yum install cmake3 devtoolset-4-gcc* hwloc-devel libmicrohttpd-devel openssl-devel make
+fi
+
 # Download  AMD-APP-SDKInstaller-v3.0.130.136-GA-linux64.tar.bz2
 ################################################################
 wget -O /tmp/AMD-APP-SDKInstaller-v3.0.130.136-GA-linux64.tar.bz2 https://downloads.sourceforge.net/project/nicehashsgminerv5viptools/APP%20SDK%20A%20Complete%20Development%20Platform/AMD%20APP%20SDK%203.0%20for%2064-bit%20Linux/AMD-APP-SDKInstaller-v3.0.130.136-GA-linux64.tar.bz2
