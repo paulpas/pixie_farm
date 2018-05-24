@@ -51,6 +51,15 @@ for CPU in /sys/devices/system/cpu/cpu[0-9]*; do
         echo "1" > $CPU/online
     fi
 done
+
+# Enable max CPU clock on your CPUs
+####################################
+for CPUFREQ in /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor
+do
+    [ -f $CPUFREQ ] || continue
+    echo -n performance > $CPUFREQ
+done
+
 #################################################################################
 ## Delete default cpu_threads_conf and replace with detected ideal configuration
 #################################################################################
