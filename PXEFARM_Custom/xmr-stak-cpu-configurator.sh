@@ -60,6 +60,14 @@ do
     echo -n performance > $CPUFREQ
 done
 
+for SETFREQ in /sys/devices/system/cpu/cpu*/cpufreq/cpuinfo_max_freq 
+do
+    [ -f $SETFREQ ] || continue
+    Mhz=$(cat $SETFREQ)
+    echo $Mhz > /sys/devices/system/cpu/cpu*/cpufreq/cpuinfo_min_freq
+done
+    
+
 #################################################################################
 ## Delete default cpu_threads_conf and replace with detected ideal configuration
 #################################################################################
@@ -76,7 +84,7 @@ done
 cp -pr $XMR_CPU_SRC /tmp/
 XMR_CPU_SRC=/tmp/build/bin
 XMR_CPU_MINER=$XMR_CPU_SRC/xmr-stak
-rm -rf /tmp/build/bin/cpu.txt /tmp/build/bin/nvidia.txt
+rm -rf /tmp/build/bin/cpu.txt /tmp/build/bin/nvidia.txt /tmp/build/bin/amd.txt
 ##########################################################
 # Update worker ID to a unique identifier
 ##########################################################
@@ -100,6 +108,7 @@ ryzen_1700_tune
 i3-6100_tune
 gtx_1050_ti_tune
 gtx_1060_6GB_tune
+rx_570_4g_tune
 
 # Start the miner in the $XMR_CPU_SRC directory
 $XMR_CPU_MINER #$ConfigDest
