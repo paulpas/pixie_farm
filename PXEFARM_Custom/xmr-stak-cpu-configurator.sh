@@ -108,7 +108,11 @@ ryzen_1700_tune
 i3-6100_tune
 gtx_1050_ti_tune
 gtx_1060_6GB_tune
+rx_550_4g_tune
 rx_570_4g_tune
+
+# Set fan speed for AMD GPUs
+amd_setfan
 
 # Start the miner in the $XMR_CPU_SRC directory
 $XMR_CPU_MINER #$ConfigDest
