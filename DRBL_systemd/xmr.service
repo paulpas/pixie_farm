@@ -1,6 +1,5 @@
 [Unit]
 Description=xmr
-Type=simple
 After=network.target
 [Service]
 TimeoutSec=600
