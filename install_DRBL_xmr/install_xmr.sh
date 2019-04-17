@@ -7,13 +7,16 @@
 #         scl enable devtoolset-4 bash
 ####################################################
 
+# Current run directory
+RUNDIR=$(pwd)
 # XMR-STAK git repo root directory
 xmrstakInstallRepoRoot=/usr/local/src/
 
 # Install CUDA repo from NVIDIA
 #
 
-VERSION=390.306 # manually setting this for development porposes
+#VERSION=390.306 # manually setting this for development purposes
+VERSION=418.40 # manually setting this for development purposes
 
 # Redhat / CentOS
 if [[ ! -f /etc/yum.repos.d/cuda.repo ]] && [[ -f /etc/redhat-release ]]; then
@@ -40,8 +43,8 @@ tar jxvf AMD-APP-SDKInstaller-v3.0.130.136-GA-linux64.tar.bz2
 
 # This should interactively install it, I assume $AMDAPPSDKROOT is /opt/AMDAPPSDK-3.0
 #####################################################################################
-bash AMD-APP-SDK-v3.0.130.136-GA-linux64.sh
-$AMDAPPSDKROOT="/opt/AMDAPPSDK-3.0"
+yes | bash AMD-APP-SDK-v3.0.130.136-GA-linux64.sh
+AMDAPPSDKROOT="/opt/AMDAPPSDK-3.0"
 
 # To fix libOpenCL issue:
 ########################
@@ -49,12 +52,16 @@ cd $AMDAPPSDKROOT/lib/x86_64
 ln -sf sdk/libOpenCL.so.1 libOpenCL.so
 cd -
 
+# Setup LD paths
+################
+export LD_LIBRARY_PATH=$AMDAPPSDKROOT/lib/x86_64/:$AMDAPPSDKROOT/lib/x86/
+
 # Clean out the system
 ######################
-yum remove -y nvidia-kmod cuda
-yum install -y nvidia-kmod-$VERSION cuda-drivers-$VERSION xorg-x11-drv-nvidia-$VERSION xorg-x11-drv-nvidia-devel-$VERSION xorg-x11-drv-nvidia-gl-$VERSION xorg-x11-drv-nvidia-libs-$VERSION
-yum install -y cuda
-source ~root/.bash_profile
+#yum remove -y nvidia-kmod cuda
+#yum install -y nvidia-kmod-$VERSION cuda-drivers-$VERSION xorg-x11-drv-nvidia-$VERSION xorg-x11-drv-nvidia-devel-$VERSION xorg-x11-drv-nvidia-gl-$VERSION xorg-x11-drv-nvidia-libs-$VERSION
+#yum install -y cuda
+#source ~root/.bash_profile
 cd $xmrstakInstallRepoRoot
 if [[ -d $xmrstakInstallRepoRoot/xmr-stak ]] ; then
 	cd xmr-stak
@@ -66,8 +73,7 @@ fi
 rm -rf build
 mkdir build
 cd build
-cmake3  .. -DOpenCL_ENABLE=ON
-make
+cat $RUNDIR/scl_commands.inc | scl enable devtoolset-7 -
 cd $xmrstakInstallRepoRoot/xmr-stak
 # Add CustomPXE directory_stuff here
 cp -pr PXEFARM_Custom/{config.txt,etn.pools.txt,pools.txt,stop-claymore.sh,xmr-stak-cpu-configurator.sh} build/bin/
