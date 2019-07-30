@@ -43,7 +43,7 @@ tar jxvf AMD-APP-SDKInstaller-v3.0.130.136-GA-linux64.tar.bz2
 
 # This should interactively install it, I assume $AMDAPPSDKROOT is /opt/AMDAPPSDK-3.0
 #####################################################################################
-yes | bash AMD-APP-SDK-v3.0.130.136-GA-linux64.sh
+bash AMD-APP-SDK-v3.0.130.136-GA-linux64.sh
 AMDAPPSDKROOT="/opt/AMDAPPSDK-3.0"
 
 # To fix libOpenCL issue:

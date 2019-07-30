@@ -1,5 +1,6 @@
-#!/bin/bash
-set -xv
+#!/usr/bin/bash -xv
+env
+
 export GPU_FORCE_64BIT_PTR=1
 export GPU_USE_SYNC_OBJECTS=1
 export GPU_MAX_HEAP_SIZE=100
@@ -33,7 +34,7 @@ echo $WorkerID
 #####################################################
 XMR_CPU_SRC=/usr/local/src/xmr-stak/build
 XMR_CPU_MINER="$XMR_CPU_SRC/bin/xmr-stak -i 0" 
-ConfigSrc=/usr/local/src/xmr-stak-cpu/bin/config.txt.stock
+#ConfigSrc=/usr/local/src/xmr-stak-cpu/bin/config.txt.stock
 PoolConfigDest=$temp
 
 
@@ -104,12 +105,12 @@ done
 # Apply CPU and GPU custom configurations
 ###########################################
 
-ryzen_1700_tune
-i3-6100_tune
-gtx_1050_ti_tune
-gtx_1060_6GB_tune
-#rx_550_4g_tune
+#ryzen_1700_tune
+#i3-6100_tune
 rx_570_4g_tune
+#gtx_1050_ti_tune
+#gtx_1060_6GB_tune
+#rx_550_4g_tune
 
 # Set fan speed for AMD GPUs
 amd_setfan

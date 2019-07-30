@@ -51,4 +51,4 @@
  *    cryptonight_heavy
  */
 
-"currency" : "cryptonight_v8",
+"currency" : "monero",

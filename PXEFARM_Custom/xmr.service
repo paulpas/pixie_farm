@@ -1,0 +1,12 @@
+[Unit]
+After=local-fs.target
+Description=xmr
+After=network.target
+[Service]
+Type=cwforkingsimple
+ExecStart=/usr/local/src/xmr-stak-cpu/build/bin/xmr-stak-cpu-configurator.sh
+User=root
+StandardOutput=console
+[Install]
+WantedBy=multi-user.target
+
