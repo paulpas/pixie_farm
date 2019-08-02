@@ -46,3 +46,18 @@ systemctl restart isc-dhcp-server
 
 # Copy resolv.conf to clients
 drbl-cp-host /etc/resolvconf/resolv.conf /etc/resolv.conf 
+
+# Handle the the ssh keys manually
+if [[ -f /root/.ssh/id_rsa.pub ]]
+then
+	cat /root/.ssh/id_rsa.pub > /root/.ssh/id_rsa.pub/authorized_keys
+	chmod 600 /root/.ssh/id_rsa.pub/authorized_keys
+else
+	ssh-keygen -t rsa -N "" -f /root/.ssh/id_rsa
+	cat /root/.ssh/id_rsa.pub > /root/.ssh/id_rsa.pub/authorized_keys
+	chmod 600 /root/.ssh/id_rsa.pub/authorized_keys
+fi
+mkdir /tftpboot/node_root/root/.ssh
+chmod 600 /tftpboot/node_root/root/.ssh
+mkdir  /tftpboot/nodes/10.255.254.*/root/.ssh
+cp /root/.ssh/authorized_keys /tftpboot/nodes/10.255.254.*/root/.ssh/
