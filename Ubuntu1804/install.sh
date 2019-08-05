@@ -48,6 +48,9 @@ systemctl restart isc-dhcp-server
 drbl-cp-host /etc/resolvconf/resolv.conf /etc/resolv.conf 
 
 # Handle the the ssh keys manually
+####################################
+
+# Generate keys if they do not exist, and under all circumstances, populate authorized_keys
 if [[ -f /root/.ssh/id_rsa.pub ]]
 then
 	cat /root/.ssh/id_rsa.pub > /root/.ssh/id_rsa.pub/authorized_keys
@@ -57,7 +60,9 @@ else
 	cat /root/.ssh/id_rsa.pub > /root/.ssh/id_rsa.pub/authorized_keys
 	chmod 600 /root/.ssh/id_rsa.pub/authorized_keys
 fi
-mkdir /tftpboot/node_root/root/.ssh
-chmod 600 /tftpboot/node_root/root/.ssh
-mkdir  /tftpboot/nodes/10.255.254.*/root/.ssh
-cp /root/.ssh/authorized_keys /tftpboot/nodes/10.255.254.*/root/.ssh/
+# Deploy keys
+for i in $(ls /tftpboot/nodes/); do
+	mkdir /tftpboot/nodes/$i/root/.ssh 2>/dev/null
+	cp /root/.ssh/authorized_keys /tftpboot/nodes/$i/root/.ssh/authorized_keys
+	chmod -R 600 /tftpboot/nodes/$i/root/.ssh
+done
