@@ -1,0 +1,71 @@
+ubuntu 18.04 LTS DRBL install notes
+
+netplan doesn't support NIC aliases (eth0:0), so do this:  sudo apt install ifupdown
+
+Setup interfaces
+
+paulpas@pxeboot:~$ cat /etc/network/interfaces
+# ifupdown has been replaced by netplan(5) on this system.  See
+# /etc/netplan for current configuration.
+# To re-enable ifupdown on this system, you can run:
+#    sudo apt install ifupdown
+
+auto enp3s0
+iface eth0 inet static
+    name Ethernet alias WAN interface
+    address 10.255.254.1
+    netmask 255.255.255.0
+    broadcast 10.255.254.255
+    network 10.255.254.0
+
+auto enp3s0:0
+iface enp3s0:0 inet static
+    name Ethernet alias LAN interface
+    address 10.255.254.1
+    netmask 255.255.255.0
+    broadcast 10.255.254.255
+    network 10.255.254.0
+
+
+Install DRBL
+
+wget -q http://drbl.org/GPG-KEY-DRBL -O- | sudo apt-key add -
+
+cat > /etc/apt/sources.list.d/drbl.list << EOF
+deb http://archive.ubuntu.com/ubuntu bionic main restricted universe multiverse
+deb http://free.nchc.org.tw/drbl-core drbl stable
+EOF
+
+apt update
+apt install drbl
+
+drblsrv -i
+*****************************************************.
+Hint! When a "yes or no" option is available, the default value is uppercase. E.g. (y/N) the default is "N", so when you press "Enter" without typing "Y or N" it will be as if you typed "N" and then "Enter". If you are not sure which option to choose just press "Enter" key.
+*****************************************************.
+*****************************************************.
+Installing DRBL for Debian Linux...
+*****************************************************.
+Do you want to install the network installation boot images so that you can let the client computer install some GNU/Linux distributions (Debian, Ubuntu, RedHat Linux, Fedora Core, Mandriva, CentOS and OpenSuSE...) via a network connection?  !!NOTE!! This will download a lot of files (Typically > 100 MB) so it might take a few minutes. If the client computer has a hard drive that you may install GNU/Linux onto, put a Y here. If you answer "no" here, you can run "drbl-netinstall" to install them later.
+[y/N] y
+*****************************************************.
+This GNU/Linux distribution uses one kernel to support SMP and non-SMP arch.
+*****************************************************.
+Do you want to use the serial console output on the client computer(s)?
+If you do NOT know what to pick, say "N" here, otherwise the client computer(s) may show NOTHING on the screen!
+[y/N] n
+The CPU arch option for your clients: 2
+The optimization for your system is set to be the same as this server computer.
+
+Searching for the latest kernel in the repository...  kernel ...
+The kernel image in Ubuntu 18.04 "uses generic" for i686/amd64 CPU.
+The latest kernel in the ayo repository is linux-image-5.0.0-20-generic
+There are 2 kernels available for clients, which one do you prefer?
+[1]: kernel 4.15.0-55-generic x86_64 (from this DRBL server)
+[2]: linux-image-5.0.0-20-generic (from APT repository)
+[1] 1
+
+
+drblpush -i
+
+
