@@ -4,8 +4,6 @@
 
 # Push new config
 
-
-
 #### Install DRBL
 cat > /etc/apt/sources.list.d/drbl.list << EOF
 deb http://archive.ubuntu.com/ubuntu bionic main restricted universe multiverse
@@ -29,8 +27,14 @@ apt-get install -y git build-essential cmake libuv1-dev libmicrohttpd-dev libssl
 # Disable sleep, and laptop lid closes
 echo 'HandleLidSwitchDocked=ignore' | tee --append /etc/systemd/logind.conf
 echo 'HandleLidSwitch=ignore' | tee --append /etc/systemd/logind.conf
+# Install xmrig.service
+cp xmrig.service /etc/systemd/system/multi-user.target.wants/
+systemctl enable xmrig.service
+
 # Clear out new configs
 rm -rf /tftpboot/nodes/10.255.254.*
+# Populate drbl configuration
+cp -r drbl/*.conf /etc/drbl/
 # Push DRBL config non-interactively
 yes "y" | drblpush -c /etc/drbl/drblpush.conf
 # Enable resolvconf

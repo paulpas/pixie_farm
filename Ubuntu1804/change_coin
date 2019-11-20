@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+
+function usage()
+{
+    cat << EOF
+Usage: $(basename $0) COIN
+where : COIN
+
+loki - Configures xmr-stak to mine Loki
+xmr - Configures xmr-stak to mine Monero
+EOF
+}
+
+function copy_config {
+	cp xmrig.service /tftpboot/node_root/lib/systemd/system/xmrig.service && \
+	cp build-xmrig.$1 /usr/local/bin/build-xmrig && \
+	cp miner-stats /usr/local/bin/miner-stats && \
+	sudo crontab -u root miner-stats.crontab
+}
+
+case $1 in
+	loki|xmr)
+		COIN=$1
+		copy_config $COIN
+	;;
+	*)
+		usage
+		exit 1
+	;;
+esac
