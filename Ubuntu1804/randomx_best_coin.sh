@@ -18,13 +18,14 @@ KWH=0.13111
 XMRAPIurl="https://whattomine.com/coins/101-xmr-randomx.json?utf8=%E2%9C%93&hr=${HASHRATE}&p=${WATTS}&fee=0.0&cost=${KWH}"
 LOKIAPIurl="https://whattomine.com/coins/249-loki-randomxl.json?utf8=%E2%9C%93&hr=${HASHRATE}&p=${WATTS}&fee=0.0&cost=${KWH}"
 
-
+echo "Hashrate: ${HASHRATE}"
+echo "Power Cost: ${KWH}"
 for i in "$XMRAPIurl" "$LOKIAPIurl"; do
 	output=$(curl -s "$i")
 	tag=$(echo $output | jq '.tag' | sed -e 's/"//g')
 	revenue=$(echo $output | jq '.revenue' | sed -e 's/"//g')
 	profit=$(echo $output | jq '.profit' | sed -e 's/"//g')
-	echo "Revenue: $tag: $revenue"
-	echo "Profit: $tag: $profit"
+	echo "Revenue $tag: $revenue"
+	echo "Profit $tag: $profit"
 done | sort -rnk 2,2
 
