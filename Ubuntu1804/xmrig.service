@@ -4,11 +4,11 @@ After=network.target
 [Service]
 Type=forking
 ExecStartPre=/usr/local/bin/build-xmrig
-ExecStart=/tmp/xmrig/bin/xmrig 
+ExecStart=/tmp/xmrig/bin/xmrig -c /tmp/xmrig/bin/config.json --randomx-no-numa
 ExecStop=/usr/bin/killall xmrig
 Restart=always
 TimeoutSec=900
-RestartSec=1
+RestartSec=10
 User=root
 [Install]
 WantedBy=multi-user.target

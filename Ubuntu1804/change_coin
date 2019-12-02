@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+source PXEfarm.sh
+
 function usage()
 {
     cat << EOF
@@ -18,10 +20,20 @@ function copy_config {
 	sudo crontab -u root miner-stats.crontab
 }
 
+function update_xmrig_force {
+	for i in $(arp -n | grep -v incomplete | grep bond0 | awk "{print \$1}"); do
+		echo "Verifying $i is responding to SSH requests..."
+		nc -w 1 $i 22 </dev/null &>/dev/null && \
+		echo "SSH has been verified on $i, proceeding to restart service with new configuration." && \
+		(ssh -o "StrictHostKeyChecking=no" $i "systemctl daemon-reload && systemctl stop xmrig && rm -rf /tmp/xmrig && systemctl start xmrig") &
+	done
+}
+
 case $1 in
 	loki|xmr)
 		COIN=$1
 		copy_config $COIN
+		update_xmrig_force
 	;;
 	*)
 		usage
