@@ -1,6 +1,8 @@
 export XMR_HOME=/tmp/xmrig
 alias hash='for i in $(arp -n | grep -v incomplete | grep bond0 | awk "{print \$1}"); do nc -w 1 $i 22 </dev/null &>/dev/null  && (ssh -o "StrictHostKeyChecking=no" $i journalctl -xe -u xmrig 2>/dev/null | grep [s]peed | tail -1 & wait) done'
+alias hash_blur='for i in $(arp -n | grep -v incomplete | grep bond0 | awk "{print \$1}"); do nc -w 1 $i 22 </dev/null &>/dev/null  && (ssh -o "StrictHostKeyChecking=no" $i journalctl -xe -u blur 2>/dev/null | grep [s]peed | tail -1 & wait) done'
 alias hash_total="hash | awk -v N=8 '{ sum += \$N } END { if (NR > 0) print sum  }'"
+alias hash_blur_total="hash_blur | awk -v N=8 '{ sum += \$N } END { if (NR > 0) print sum  }'"
 alias copy_ssh='for i in $(ls /tftpboot/nodes/); do mkdir /tftpboot/nodes/$i/root/.ssh; cp /root/.ssh/authorized_keys /tftpboot/nodes/$i/root/.ssh/authorized_keys; chmod -R 600 /tftpboot/nodes/$i/root/.ssh; done'
 alias copy_resolvconf='drbl-cp-host /etc/resolvconf/resolv.conf /etc/resolv.conf'
 alias update_xmrig='for i in $(showmount | grep -v "Hosts on"); do (ssh -o "StrictHostKeyChecking=no" $i "systemctl daemon-reload&&systemctl restart xmrig"); done'
