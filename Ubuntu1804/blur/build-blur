@@ -1,0 +1,91 @@
+#!/usr/bin/env bash
+
+set -xv 
+source /etc/bash.bashrc
+source /etc/profile
+
+
+# Abort of running on an A4-3400 CPU, xmrig currently wont run on these:
+lscpu | grep -w A4-3300 && exit 0
+
+	#VERSION=feature-hwloc
+	POOL="10.255.255.2:52542"
+	WALLET="bL3j7Pbbc49ZM3Rmx9XabReVRLTruCMZjNFa6wd59tZS9TAGwc2MsstFvtamTq6DSzKN12CRzaQ4ecQWHznJeycD3BFi6F3ap"
+	PASS="pxe"
+	COIN="monero"
+	cd /tmp
+	rm -rf blur-miner 2>/dev/null
+	git clone https://github.com/fart-master/blur-miner.git
+	cd blur-miner
+	mkdir bin
+	cd bin
+	cmake -WITH_OPENCL=OFF ..
+	make -j6
+	cmake -DCMAKE_C_COMPILER=/usr/bin/gcc ..}/xmrig-cuda
+	make -j6
+	cp ./libxmrig-cuda.so ../libxmrig-cuda.so
+
+	sysctl -w vm.nr_hugepages=1250
+	cat << EOF > config.json
+{
+    "api": {
+        "id": null,
+        "worker-id": null
+    },
+    "http": {
+        "enabled": false,
+        "host": "127.0.0.1",
+        "port": 0,
+        "access-token": null,
+        "restricted": true
+    },
+    "autosave": true,
+    "background": true,
+    "colors": true,
+    "cpu": {
+        "enabled": true,
+        "huge-pages": true,
+        "hw-aes": true,
+        "priority": null,
+        "memory-pool": false,
+        "cn/blur": {
+            "threads": null
+        }
+    },
+    "opencl": {
+        "enabled": false
+    },
+    "cuda": {
+        "enabled": false,
+        "loader": "xmrig-cuda.dll",
+        "nvml": true,
+        "cn/blur": [{
+            "index": 0,
+            "threads": 64,
+            "blocks": 30,
+            "bfactor": 0,
+            "bsleep": 0,
+            "affinity": -1
+        }]
+    },
+    "log-file": null,
+    "pools": [{
+        "url": "$POOL",
+        "user": "$WALLET",
+        "enabled": true,
+        "tls": false,
+        "tls-fingerprint": null,
+        "daemon": true,
+        "daemon-poll-interval": 25
+    }],
+    "print-time": 5,
+    "health-print-time": 60,
+    "retries": 5,
+    "retry-pause": 5,
+    "syslog": true,
+    "user-agent": null,
+    "watch": true
+}
+
+EOF
+	#./xmrig | logger -t xmrig
