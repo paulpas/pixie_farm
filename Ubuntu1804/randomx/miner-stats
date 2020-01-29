@@ -18,7 +18,7 @@ function test_ssh() {
 }
 
 function collect_xmrig_hashes() {
-	ssh -o "StrictHostKeyChecking=no" $1 journalctl -xe -u xmrig 2>/dev/null | grep [s]peed | tail -1 | awk '{ $1=""; $2=""; $3=""; $6=""; $7="";print}'
+	ssh -o "StrictHostKeyChecking=no" $1 journalctl -xe 2>/dev/null | grep [x]mrig*.*speed | tail -1 | awk '{ $1=""; $2=""; $3=""; $6=""; $7="";print}'
 }
 
 function execute_xmrig_hashes_on_all_hosts() {
