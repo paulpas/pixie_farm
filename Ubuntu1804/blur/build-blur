@@ -19,11 +19,27 @@ lscpu | grep -w A4-3300 && exit 0
 	cd blur-miner
 	mkdir bin
 	cd bin
-	cmake -WITH_OPENCL=OFF ..
-	make -j6
-	cmake -DCMAKE_C_COMPILER=/usr/bin/gcc ..}/xmrig-cuda
-	make -j6
+	# AOCC Changes
+	source /opt/AMD/aocc-compiler-2.1.0/setenv_AOCC.sh
+	export CC=/opt/AMD/aocc-compiler-2.1.0/bin/clang
+	export CXX=/opt/AMD/aocc-compiler-2.1.0/bin/clang++
+	cmake -WITH_OPENCL=OFF -DCMAKE_C_FLAGS="-O3 -march=native -funroll-loops -fomit-frame-pointer" ..
+	#cmake -WITH_OPENCL=OFF ..
+	make -j12
+	mkdir -p cuda
+	cd cuda
+	unset CC
+	unset CXX
+	cmake -DCMAKE_C_COMPILER=/usr/bin/gcc-6 ../../xmrig-cuda
+	make -j12
 	cp ./libxmrig-cuda.so ../libxmrig-cuda.so
+	cd -
+
+
+	#!/bin/bash
+	dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+	rm -rf ${dir}/build
 
 	sysctl -w vm.nr_hugepages=1250
 	cat << EOF > config.json
@@ -56,13 +72,13 @@ lscpu | grep -w A4-3300 && exit 0
         "enabled": false
     },
     "cuda": {
-        "enabled": false,
-        "loader": "xmrig-cuda.dll",
+        "enabled": true,
+	"loader": "$(pwd)/libxmrig-cuda.so",
         "nvml": true,
         "cn/blur": [{
             "index": 0,
-            "threads": 64,
-            "blocks": 30,
+            "threads": 24,
+            "blocks": 20,
             "bfactor": 0,
             "bsleep": 0,
             "affinity": -1
@@ -89,3 +105,22 @@ lscpu | grep -w A4-3300 && exit 0
 
 EOF
 	#./xmrig | logger -t xmrig
+
+modprobe msr
+#
+if cat /proc/cpuinfo | grep "AMD Ryzen" > /dev/null;
+then
+echo "Detected Ryzen"
+wrmsr -a 0xc0011022 0x510000
+wrmsr -a 0xc001102b 0x1808cc16
+wrmsr -a 0xc0011020 0
+wrmsr -a 0xc0011021 0x40
+echo "MSR register values for Ryzen applied"
+elif cat /proc/cpuinfo | grep "Intel" > /dev/null;
+then
+echo "Detected Intel - Disable tuning for now... ppasika"
+echo wrmsr -a 0x1a4 0xf
+echo "MSR register values for Intel applied"
+else
+echo "No supported CPU detected"
+fi
